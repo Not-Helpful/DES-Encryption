@@ -109,6 +109,7 @@ int tellBit32(int input, int index) {
     }
 }
 
+
 int tellBit64(long long input, int index) {
     long long mask = 1LL << index;
     long long test = mask & input;
