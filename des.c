@@ -81,7 +81,7 @@ long long setBit64(long long input, int index, int value) {
         long long mask = -1LL - (1LL << (index));
         newInt = input & mask;
     } else {
-        long long mask = (9223372036854775807LL >> (index));
+        long long mask = (1LL << (index));
         newInt = input | mask;
     }
     return newInt;
@@ -93,7 +93,7 @@ int setBit32(int input, int index, int value) {
         int mask = -1 - (1 << (index));
         newInt = input & mask;
     } else {
-        int mask = (2147483648 >> (index));
+        int mask = (1 >> (index));
         newInt = input | mask;
     }
     return newInt;
