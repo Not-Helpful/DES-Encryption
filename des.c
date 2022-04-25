@@ -19,6 +19,11 @@ void _debugPrint32bit(int);
 void _debugPrint64bit(long long);
 
 
+// Next Steps:
+
+    // 1. Fix RH and LH functions
+    // 2. Finish and test mangler function.
+
 unsigned long long DESRound() {
     int LH = getLH();
     _debugPrint32bit(LH);
@@ -73,10 +78,10 @@ int getRH() {
 long long setBit64(long long input, int index, int value) {
     long long newInt = 0;
     if (value == 0) {
-        int mask = -1 - (1 << (index));
+        long long mask = -1LL - (1LL << (index));
         newInt = input & mask;
     } else {
-        int mask = (9223372036854775807LL >> (index));
+        long long mask = (9223372036854775807LL >> (index));
         newInt = input | mask;
     }
     return newInt;
@@ -97,7 +102,7 @@ int setBit32(int input, int index, int value) {
 int tellBit32(int input, int index) {
     int mask = 1 << index;
     int test = mask & input;
-    if (test < 0) {
+    if (test > 0) {
         return 1;
     } else {
         return 0;
@@ -105,9 +110,9 @@ int tellBit32(int input, int index) {
 }
 
 int tellBit64(long long input, int index) {
-    long long mask = 1 << index;
-    int test = mask & input;
-    if (test < 0) {
+    long long mask = 1LL << index;
+    long long test = mask & input;
+    if (test > 0) {
         return 1;
     } else {
         return 0;
@@ -125,7 +130,7 @@ void _debugPrint32bit(int input) {
 
 void _debugPrint64bit(long long input) {
     int bit;
-    for (int i = 0; i < 63; i++) {
+    for (int i = 63; i >= 0; i--) {
         bit = tellBit64(input, i);
         printf("%d", bit);
     }
