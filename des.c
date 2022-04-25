@@ -93,7 +93,7 @@ int setBit32(int input, int index, int value) {
         int mask = -1 - (1 << (index));
         newInt = input & mask;
     } else {
-        int mask = (1 >> (index));
+        int mask = (1 << (index));
         newInt = input | mask;
     }
     return newInt;
