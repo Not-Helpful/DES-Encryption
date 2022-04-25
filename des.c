@@ -80,13 +80,21 @@ int setBit32(int input, int index, int value) {
 int tellBit32(int input, int index) {
     int mask = 1 << index;
     int test = mask & input;
-    return test;
+    if (test < 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int tellBit64(long long input, int index) {
     long long mask = 1 << index;
     int test = mask & input;
-    return test;
+    if (test < 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 int main() {
