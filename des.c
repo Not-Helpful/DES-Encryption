@@ -18,18 +18,13 @@ int tellBit64(long long, int);
 void _debugPrint32bit(int);
 void _debugPrint64bit(long long);
 
-
-// Next Steps:
-
-    // 1. Fix RH and LH functions
-    // 2. Finish and test mangler function.
-
 ////////////////////////////////////////////////////////////////
 // Debug Functions
+
 void _debugPrint32bit(int input) {
     int bit;
     printf("%d:\t", input);
-    for (int i = 0; i < 31; i++) {
+    for (int i = 31; i >= 0; i--) {
         bit = tellBit32(input, i);
         printf("%d", bit);
     }
@@ -49,8 +44,9 @@ void _debugPrint64bit(long long input) {
 
 ////////////////////////////////////////////////////////////////
 // Bit Manipulation Functions
+
 long long setBit64(long long input, int index, int value) {
-    long long newInt = 0;
+    long long newInt = 0LL;
     if (value == 0) {
         long long mask = -1LL - (1LL << (index));
         newInt = input & mask;
@@ -64,7 +60,7 @@ long long setBit64(long long input, int index, int value) {
 int setBit32(int input, int index, int value) {
     int newInt = 0;
     if (value == 0) {
-        int mask = -1 - (1 << (index));
+        int mask = (-1) - (1 << (index));
         newInt = input & mask;
     } else {
         int mask = (1 << (index));
@@ -76,7 +72,7 @@ int setBit32(int input, int index, int value) {
 int tellBit32(int input, int index) {
     int mask = 1 << index;
     int test = mask & input;
-    if (test > 0) {
+    if (test != 0) {
         return 1;
     } else {
         return 0;
@@ -86,7 +82,7 @@ int tellBit32(int input, int index) {
 int tellBit64(long long input, int index) {
     long long mask = 1LL << index;
     long long test = mask & input;
-    if (test > 0) {
+    if (test != 0) {
         return 1;
     } else {
         return 0;
@@ -101,31 +97,61 @@ int manglerFunction(int RH) {
 
 long long expansionFunction(int RH) {
     long long retValue = 0;
+    int index32 = 0;
     int bit = tellBit32(RH, 31);
     retValue = setBit64(retValue, 0, bit);
-
+    index32++;
     for (int i = 0; i < 4; i++) {
-        bit = tellBit32(RH, (i));
+        bit = tellBit32(RH, i);
         retValue = setBit64(retValue, (i+1), bit);
+        index32++;
     }
+
+    bit = tellBit32(RH, 3);
+    retValue = setBit64(retValue, 6, bit);
+    index32++;
+    int index64 = 5;
 
     for (int j = 0; j < 6; j++) {
-        // Before Bit
+        bit = tellBit32(RH, index32);
+        retValue = setBit64(retValue, index64, bit);
+        index64 += 2;
         for (int i = 0; i < 4; i++) {
-            // 4 middle bits
+            bit = tellBit32(RH, index32);
+            retValue = setBit64(retValue, index64, bit);
+            index32++;
+            index64++;
         }
-        // After Bit
+        bit = tellBit32(RH, (index32-1));
+        retValue = setBit64(retValue, (index64+1), bit);
     }
+
+    bit = tellBit32(RH, index32);
+    retValue = setBit64(retValue, index64, bit);
+    index64 += 2;
+
+    for (int i = 0; i < 4; i++) {
+        bit = tellBit32(RH, index32);
+        retValue = setBit64(retValue, index64, bit);
+        index32++;
+        index64++;
+    }
+    index64++;
+    bit = tellBit32(RH, 0);
+    retValue = setBit64(retValue, index64, bit);
     return retValue;
 }
 
+long long XOR48(long long RH, long long key) {
+    
+}
 
 int getLH() {
     int leftHalf = 0;
     int value;
-    for (int i = 0; i < 32; i++) {
+    for (int i = 32; i < 64; i++) {
         value = tellBit64(plaintext, i);
-        leftHalf = setBit32(leftHalf, i, value);
+        leftHalf = setBit32(leftHalf, (i-32), value);
     }
     return leftHalf;
 }
@@ -133,7 +159,7 @@ int getLH() {
 int getRH() {
     int rightHalf = 0;
     int value;
-    for (int i = 32; i < 64; i++) {
+    for (int i = 0; i < 32; i++) {
         value = tellBit64(plaintext, i);
         rightHalf = setBit32(rightHalf, i, value);
     }
@@ -141,11 +167,13 @@ int getRH() {
 }
 
 unsigned long long DESRound() {
+    long long ciphertext = 0LL;
     int LH = getLH();
     _debugPrint32bit(LH);
     int RH = getRH();
     _debugPrint32bit(RH);
     int newRH = manglerFunction(RH);
+    return ciphertext;
 }
 
 int main() {
