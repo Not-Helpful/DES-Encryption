@@ -96,6 +96,7 @@ int tellBit64(long long input, int index) {
 
 int manglerFunction(int RH) {
     long long expandedRH = expansionFunction(RH);
+    return expandedRH;
 }
 
 long long expansionFunction(int RH) {
@@ -126,6 +127,7 @@ int getLH() {
         value = tellBit64(plaintext, i);
         leftHalf = setBit32(leftHalf, i, value);
     }
+    return leftHalf;
 }
 
 int getRH() {
@@ -135,6 +137,7 @@ int getRH() {
         value = tellBit64(plaintext, i);
         rightHalf = setBit32(rightHalf, i, value);
     }
+    return rightHalf;
 }
 
 unsigned long long DESRound() {
