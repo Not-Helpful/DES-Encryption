@@ -157,7 +157,17 @@ int tellBit64(long long input, int index) {
 
 int manglerFunction(int RH) {
     long long expandedRH = expansionFunction(RH);
-    return expandedRH;
+    long long exandedRHxorKey = XOR48(exandedRHxorKey, sixtyFourBitKey);
+    int sboxedNum = 0;
+    sboxedNum = sBox1(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox2(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox3(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox4(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox5(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox6(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox7(exandedRHxorKey, sboxedNum);
+    sboxedNum = sBox8(exandedRHxorKey, sboxedNum);
+    return sboxedNum;
 }
 
 long long expansionFunction(int RH) {
@@ -223,8 +233,179 @@ long long XOR48(long long RH, long long key) {
     }
 }
 
-int sBoxes(long long expandedRHxorKey) {
-    
+int sBox1(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 0);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 5);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1; i < 5; i++) {
+        bit = tellBit64(expandedRHxorKey, i);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S1[row][column];
+    for (int i = 0, iRH = 0; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+}
+
+int sBox2(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 6);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey,11);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 7; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S2[row][column];
+    for (int i = 0, iRH = 4; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox3(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 12);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 17);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 13; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S3[row][column];
+    for (int i = 0, iRH = 8; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox4(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 18);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 23);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 19; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S4[row][column];
+    for (int i = 0, iRH = 12; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox5(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 24);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 29);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 25; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S5[row][column];
+    for (int i = 0, iRH = 16; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox6(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 30);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 35);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 31; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S6[row][column];
+    for (int i = 0, iRH = 20; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox7(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 36);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 41);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 37; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S7[row][column];
+    for (int i = 0, iRH = 24; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
+}
+
+int sBox8(long long expandedRHxorKey, int newRH) {
+    int row = 0;
+    int bit = tellBit64(expandedRHxorKey, 42);
+    row = setBit32(row, 0, bit);
+
+    bit = tellBit64(expandedRHxorKey, 47);
+    row = setBit32(row, 0, bit);
+
+    int column = 0;
+    for (int i = 1, iKey = 43; i < 5; i++, iKey++) {
+        bit = tellBit64(expandedRHxorKey, iKey);
+        column = setBit32(column, i, bit);
+    }
+
+    int sboxNum = S8[row][column];
+    for (int i = 0, iRH = 28; i < 4; i++, iRH++) {
+        bit = tellBit32(sboxNum, i);
+        newRH = setBit32(newRH, iRH, bit);
+    }
+
 }
 
 int getLH() {
@@ -247,17 +428,15 @@ int getRH() {
     return rightHalf;
 }
 
-unsigned long long DESRound() {
+unsigned long long DESRounds(long long plaintext) {
     long long ciphertext = 0LL;
     int LH = getLH();
-    _debugPrint32bit(LH);
     int RH = getRH();
-    _debugPrint32bit(RH);
     int newRH = manglerFunction(RH);
+    newRH = LH ^ RH;
     return ciphertext;
 }
 
 int main() {
-    _debugPrint64bit(plaintext);
-    DESRound();
+    DESRounds(plaintext);
 }
