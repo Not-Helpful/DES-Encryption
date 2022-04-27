@@ -4,22 +4,40 @@
 
 long long sixtyFourBitKey = 69696969LL;
 long long plaintext = 999999999999999LL;
-long ciphertext;
 
-unsigned long long DESRound();
+long long DESRounds(long long);
 int manglerFunction(int);
 long long expansionFunction(int);
-int getLH();
-int getRH();
+int getLH(long long);
+int getRH(long long);
 long long setBit64(long long, int, int);
 int setBit32(int, int, int);
 int tellBit32(int, int);
 int tellBit64(long long, int);
 void _debugPrint32bit(int);
 void _debugPrint64bit(long long);
+long long XOR48(long long, long long);
+int sBox1(long long, int);
+int sBox2(long long, int);
+int sBox3(long long, int);
+int sBox4(long long, int);
+int sBox5(long long, int);
+int sBox6(long long, int);
+int sBox7(long long, int);
+int sBox8(long long, int);
+long long reconstructText(int, int);
+
+
+// Something about the function is not working, but I cant find what specifically is broken.
+// I tried debugging many of the functions and narrowed the problem down to the mangler function.
+// I believe the Sbox functions are the actual problem, but I am out of time. Sorry :(
+
 
 ////////////////////////////////////////////////////////////////
 // S Boxes
+
+// S Box Values come from: https://www.techiedelight.com/des-implementation-c/
+
 int S1[4][16] =
 {
         14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
@@ -231,6 +249,7 @@ long long XOR48(long long RH, long long key) {
             retValue = setBit64(retValue, i, 1);
         }
     }
+    return retValue;
 }
 
 int sBox1(long long expandedRHxorKey, int newRH) {
@@ -252,6 +271,7 @@ int sBox1(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
+    return newRH;
 }
 
 int sBox2(long long expandedRHxorKey, int newRH) {
@@ -273,7 +293,7 @@ int sBox2(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox3(long long expandedRHxorKey, int newRH) {
@@ -295,7 +315,7 @@ int sBox3(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox4(long long expandedRHxorKey, int newRH) {
@@ -317,7 +337,7 @@ int sBox4(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox5(long long expandedRHxorKey, int newRH) {
@@ -339,7 +359,7 @@ int sBox5(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox6(long long expandedRHxorKey, int newRH) {
@@ -361,7 +381,7 @@ int sBox6(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox7(long long expandedRHxorKey, int newRH) {
@@ -383,7 +403,7 @@ int sBox7(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
 int sBox8(long long expandedRHxorKey, int newRH) {
@@ -405,38 +425,75 @@ int sBox8(long long expandedRHxorKey, int newRH) {
         bit = tellBit32(sboxNum, i);
         newRH = setBit32(newRH, iRH, bit);
     }
-
+    return newRH;
 }
 
-int getLH() {
-    int leftHalf = 0;
-    int value;
+long long reconstructText(int rightHalf, int leftHalf) {
+    long long text = 0LL;
+    int bit = 0;
+    for (int i = 0; i < 32; i++) {
+        bit = tellBit32(rightHalf, i);
+        text = setBit64(text, i, bit);
+    }
+    
     for (int i = 32; i < 64; i++) {
-        value = tellBit64(plaintext, i);
-        leftHalf = setBit32(leftHalf, (i-32), value);
+        bit = tellBit32(leftHalf, (i-32));
+        text = setBit64(text, i, bit);
+    }
+    return text;
+}
+
+int getLH(long long text) {
+    int leftHalf = 0;
+    int bit;
+    for (int i = 32; i < 64; i++) {
+        bit = tellBit64(text, i);
+        leftHalf = setBit32(leftHalf, (i-32), bit);
     }
     return leftHalf;
 }
 
-int getRH() {
+int getRH(long long text) {
     int rightHalf = 0;
-    int value;
+    int bit;
     for (int i = 0; i < 32; i++) {
-        value = tellBit64(plaintext, i);
-        rightHalf = setBit32(rightHalf, i, value);
+        bit = tellBit64(text, i);
+        rightHalf = setBit32(rightHalf, i, bit);
     }
     return rightHalf;
 }
 
-unsigned long long DESRounds(long long plaintext) {
-    long long ciphertext = 0LL;
-    int LH = getLH();
-    int RH = getRH();
-    int newRH = manglerFunction(RH);
-    newRH = LH ^ RH;
-    return ciphertext;
+long long DESRounds(long long text) {
+    int LH = 0;
+    int RH = 0;
+    int newRH = 0;
+    for (int i = 0; i < 1; i++) {
+        LH = getLH(text);
+        RH = getRH(text);
+        newRH = manglerFunction(RH);
+        newRH = LH ^ RH;
+        text = reconstructText(newRH, RH);
+    }
+    return text;
+}
+
+long long DESRoundsDecrypt(long long text) {
+    int LH = 0;
+    int RH = 0;
+    int newRH = 0;
+    for (int i = 0; i < 1; i++) {
+        RH = getLH(text);
+        LH = getRH(text);
+        newRH = manglerFunction(RH);
+        newRH = LH ^ RH;
+        text = reconstructText(newRH, RH);
+    }
+    return text;
 }
 
 int main() {
-    DESRounds(plaintext);
+    _debugPrint64bit(plaintext);
+    long long ciphertext = DESRounds(plaintext);
+    long long decrypt = DESRoundsDecrypt(ciphertext);
+    _debugPrint64bit(decrypt);
 }
