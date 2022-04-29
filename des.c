@@ -3,7 +3,7 @@
 #include <string.h>
 
 long long sixtyFourBitKey = 69696969LL;
-long long plaintext = 999999999999999LL;
+long long plaintext = 22222222222222222LL;
 
 long long DESRounds(long long);
 int manglerFunction(int);
@@ -467,7 +467,7 @@ long long DESRounds(long long text) {
     int LH = 0;
     int RH = 0;
     int newRH = 0;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 12; i++) {
         LH = getLH(text);
         RH = getRH(text);
         newRH = manglerFunction(RH);
@@ -481,13 +481,14 @@ long long DESRoundsDecrypt(long long text) {
     int LH = 0;
     int RH = 0;
     int newRH = 0;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 12; i++) {
         RH = getLH(text);
         LH = getRH(text);
         newRH = manglerFunction(RH);
         newRH = LH ^ RH;
         text = reconstructText(newRH, RH);
     }
+    //text = reconstructText(RH, newRH);
     return text;
 }
 
