@@ -194,6 +194,8 @@ long long expansionFunction(int RH) {
     int bit = tellBit32(RH, 31);
     retValue = setBit64(retValue, 0, bit);
     index32++;
+
+    // First
     for (int i = 0; i < 4; i++) {
         bit = tellBit32(RH, i);
         retValue = setBit64(retValue, (i+1), bit);
@@ -205,6 +207,7 @@ long long expansionFunction(int RH) {
     index32++;
     int index64 = 5;
 
+    // Second
     for (int j = 0; j < 6; j++) {
         bit = tellBit32(RH, index32);
         retValue = setBit64(retValue, index64, bit);
@@ -223,6 +226,7 @@ long long expansionFunction(int RH) {
     retValue = setBit64(retValue, index64, bit);
     index64 += 2;
 
+    // Third
     for (int i = 0; i < 4; i++) {
         bit = tellBit32(RH, index32);
         retValue = setBit64(retValue, index64, bit);
@@ -467,11 +471,11 @@ long long DESRounds(long long text) {
     int LH = 0;
     int RH = 0;
     int newRH = 0;
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 16; i++) {
         LH = getLH(text);
         RH = getRH(text);
         newRH = manglerFunction(RH);
-        newRH = LH ^ RH;
+        newRH = LH ^ newRH;
         text = reconstructText(newRH, RH);
     }
     return text;
@@ -481,14 +485,13 @@ long long DESRoundsDecrypt(long long text) {
     int LH = 0;
     int RH = 0;
     int newRH = 0;
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 16; i++) {
         RH = getLH(text);
         LH = getRH(text);
         newRH = manglerFunction(RH);
-        newRH = LH ^ RH;
+        newRH = LH ^ newRH;
         text = reconstructText(newRH, RH);
     }
-    //text = reconstructText(RH, newRH);
     return text;
 }
 
